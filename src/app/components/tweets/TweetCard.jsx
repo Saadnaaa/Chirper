@@ -7,8 +7,11 @@ export default function TweetCard({ tweet }) {
   return (
     <article>
       <div>
-        <strong>{tweet.author.name}</strong>
-        <span>@{tweet.author.username}</span>
+        <Link href={`/profile/${tweet.author.username}`}>
+          <strong>{tweet.author.name}</strong>
+
+          <span>@{tweet.author.username}</span>
+        </Link>
       </div>
 
       <Link href={`/tweet/${tweet._id}`}>

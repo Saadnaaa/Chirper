@@ -2,6 +2,7 @@ import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import TweetComposer from "../components/tweets/TweetComposer";
 import { getTweets } from "../actions/tweets/getTweets";
 import TweetCard from "../components/tweets/TweetCard";
+import Link from "next/link";
 
 export default async function HomePage() {
   const user = await getCurrentUser();
@@ -13,7 +14,9 @@ export default async function HomePage() {
 
       {user && (
         <>
-          <p>{user.username}</p>
+          <Link href={`/profile/${user.username}`}>
+            <p>{user.username}</p>
+          </Link>
 
           <section>
             {tweets.length === 0 ? (

@@ -6,10 +6,18 @@ import User from "@/models/User";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 
+function normalizeUsername(username) {
+  return String(username ?? "")
+    .trim()
+    .replace(/^(?:@|%40)+/gi, "");
+}
+
 export const registerUser = async (name, username, email, password) => {
   try {
     await connectDB();
-    if (!name || !username || !email || !password) {
+    const normalizedUsername = normalizeUsername(username);
+
+    if (!name || !normalizedUsername || !email || !password) {
       return {
         success: false,
         message: "All fields are required",
@@ -36,7 +44,11 @@ export const registerUser = async (name, username, email, password) => {
     }
 
     const existingUser = await User.findOne({
-      $or: [{ email }, { username }],
+      $or: [
+        { email },
+        { username: normalizedUsername },
+        { username: `@${normalizedUsername}` },
+      ],
     });
 
     if (existingUser) {
@@ -51,7 +63,7 @@ export const registerUser = async (name, username, email, password) => {
 
     const user = await User.create({
       name,
-      username,
+      username: normalizedUsername,
       email,
       password: hashedPassword,
     });
