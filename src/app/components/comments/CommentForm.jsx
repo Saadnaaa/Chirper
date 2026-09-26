@@ -39,12 +39,12 @@ export default function CommentForm({ tweetId }) {
         type="text"
         value={text}
         onChange={(event) => setText(event.target.value)}
-        placeholder="Post your reply"
+        placeholder="Write a comment"
         maxLength={280}
       />
 
       <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Replying..." : "Reply"}
+        {isSubmitting ? "Commenting..." : "Comment"}
       </button>
     </form>
   );

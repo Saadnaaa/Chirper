@@ -1,32 +1,26 @@
 "use server";
 
-import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import { connectDB } from "@/lib/database/db";
-import Tweet from "@/models/Tweet";
+import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 
-export const createTweet = async (text, image = "") => {
+import Tweet from "@/models/Tweet";
+import cloudinary from "@/lib/cloudinary";
+
+export async function createTweet(text, image = "") {
   try {
-    await connectDB();
     const user = await getCurrentUser();
 
     if (!user) {
       return {
         success: false,
         message: "You must be logged in",
-        status: 401,
       };
     }
+
     if (!text?.trim() && !image) {
       return {
         success: false,
         message: "Tweet cannot be empty",
-        status: 400,
-      };
-    }
-    if (text && text.length > 280) {
-      return {
-        success: false,
-        message: "Tweet cannot exceed 280 characters",
       };
     }
 
@@ -36,18 +30,33 @@ export const createTweet = async (text, image = "") => {
         message: "Tweet cannot exceed 280 characters",
       };
     }
+
+    let imageUrl = "";
+    let imagePublicId = "";
+
+    if (image) {
+      const uploadResult = await cloudinary.uploader.upload(image, {
+        folder: "x-clone/tweets",
+      });
+
+      imageUrl = uploadResult.secure_url;
+
+      imagePublicId = uploadResult.public_id;
+    }
+
+    await connectDB();
 
     const tweet = await Tweet.create({
       author: user._id,
       text: text?.trim() || "",
-      image,
+      image: imageUrl,
+      imagePublicId,
     });
 
     return {
       success: true,
       message: "Tweet created successfully",
       tweet: JSON.parse(JSON.stringify(tweet)),
-      status: 201,
     };
   } catch (error) {
     console.error("Create tweet error:", error);
@@ -57,4 +66,4 @@ export const createTweet = async (text, image = "") => {
       message: "Failed to create tweet",
     };
   }
-};
+}

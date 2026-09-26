@@ -3,6 +3,7 @@
 import { connectDB } from "@/lib/database/db";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import User from "@/models/User";
+import Notification from "@/models/Notification";
 
 export async function toggleFollow(userId) {
   try {
@@ -12,7 +13,6 @@ export async function toggleFollow(userId) {
       return {
         success: false,
         message: "You must be logged in",
-        status: 401,
       };
     }
 
@@ -20,7 +20,6 @@ export async function toggleFollow(userId) {
       return {
         success: false,
         message: "You cannot follow yourself",
-        status: 400,
       };
     }
 
@@ -32,7 +31,6 @@ export async function toggleFollow(userId) {
       return {
         success: false,
         message: "User not found",
-        status: 404,
       };
     }
 
@@ -58,6 +56,14 @@ export async function toggleFollow(userId) {
 
     await currentUser.save();
     await targetUser.save();
+
+    if (!alreadyFollowing) {
+      await Notification.create({
+        recipient: targetUser._id,
+        sender: currentUser._id,
+        type: "follow",
+      });
+    }
 
     return {
       success: true,

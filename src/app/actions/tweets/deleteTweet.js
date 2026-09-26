@@ -1,21 +1,23 @@
 "use server";
 
-import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import { connectDB } from "@/lib/database/db";
-import Tweet from "@/models/Tweet";
+import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 
-export const deleteTweet = async (tweetId) => {
+import Tweet from "@/models/Tweet";
+import cloudinary from "@/lib/cloudinary";
+
+export async function deleteTweet(tweetId) {
   try {
-    await connectDB();
     const user = await getCurrentUser();
 
     if (!user) {
       return {
         success: false,
         message: "You must be logged in",
-        status: 401,
       };
     }
+
+    await connectDB();
 
     const tweet = await Tweet.findById(tweetId);
 
@@ -23,7 +25,6 @@ export const deleteTweet = async (tweetId) => {
       return {
         success: false,
         message: "Tweet not found",
-        status: 404,
       };
     }
 
@@ -31,8 +32,11 @@ export const deleteTweet = async (tweetId) => {
       return {
         success: false,
         message: "You can only delete your own tweets",
-        status: 403,
       };
+    }
+
+    if (tweet.imagePublicId) {
+      await cloudinary.uploader.destroy(tweet.imagePublicId);
     }
 
     await Tweet.findByIdAndDelete(tweetId);
@@ -40,7 +44,6 @@ export const deleteTweet = async (tweetId) => {
     return {
       success: true,
       message: "Tweet deleted successfully",
-      status: 200,
     };
   } catch (error) {
     console.error("Delete tweet error:", error);
@@ -50,4 +53,4 @@ export const deleteTweet = async (tweetId) => {
       message: "Failed to delete tweet",
     };
   }
-};
+}

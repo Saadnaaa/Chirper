@@ -24,6 +24,7 @@ export default async function TweetPage({ params }) {
       <article>
         <div>
           <strong>{tweet.author.name}</strong>
+
           <span>@{tweet.author.username}</span>
         </div>
 
@@ -37,7 +38,7 @@ export default async function TweetPage({ params }) {
       </article>
 
       <section>
-        <h2>Replies</h2>
+        <h2>Comments</h2>
 
         <CommentForm tweetId={tweet._id} />
 

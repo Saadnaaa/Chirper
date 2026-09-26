@@ -2,6 +2,7 @@ import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import TweetComposer from "../components/tweets/TweetComposer";
 import { getTweets } from "../actions/tweets/getTweets";
 import TweetCard from "../components/tweets/TweetCard";
+import SuggestedUsers from "@/app/components/profile/SuggestedUsers";
 import Link from "next/link";
 
 export default async function HomePage() {
@@ -11,6 +12,8 @@ export default async function HomePage() {
   return (
     <main>
       <h1>Welcome to X Clone</h1>
+
+      <SuggestedUsers />
 
       {user && (
         <>

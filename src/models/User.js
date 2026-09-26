@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
-      minlength: 8,
+      minlength: 6,
     },
 
     profilePic: {
@@ -37,7 +37,17 @@ const userSchema = new mongoose.Schema(
       default: "",
     },
 
+    profilePicPublicId: {
+      type: String,
+      default: "",
+    },
+
     coverImage: {
+      type: String,
+      default: "",
+    },
+
+    coverImagePublicId: {
       type: String,
       default: "",
     },

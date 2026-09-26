@@ -3,6 +3,7 @@
 import { connectDB } from "@/lib/database/db";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import Tweet from "@/models/Tweet";
+import Notification from "@/models/Notification";
 
 export async function toggleLike(tweetId) {
   try {
@@ -39,6 +40,17 @@ export async function toggleLike(tweetId) {
     }
 
     await tweet.save();
+
+    if (!alreadyLiked) {
+      if (tweet.author.toString() !== user._id.toString()) {
+        await Notification.create({
+          recipient: tweet.author,
+          sender: user._id,
+          type: "like",
+          tweet: tweet._id,
+        });
+      }
+    }
 
     return {
       success: true,

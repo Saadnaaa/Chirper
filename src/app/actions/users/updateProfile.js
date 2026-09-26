@@ -2,7 +2,9 @@
 
 import { connectDB } from "@/lib/database/db";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
+
 import User from "@/models/User";
+import cloudinary from "@/lib/cloudinary";
 
 export async function updateProfile(
   name,
@@ -19,7 +21,6 @@ export async function updateProfile(
       return {
         success: false,
         message: "You must be logged in",
-        status: 401,
       };
     }
 
@@ -27,7 +28,6 @@ export async function updateProfile(
       return {
         success: false,
         message: "Name is required",
-        status: 400,
       };
     }
 
@@ -35,7 +35,6 @@ export async function updateProfile(
       return {
         success: false,
         message: "Name cannot exceed 50 characters",
-        status: 400,
       };
     }
 
@@ -43,7 +42,6 @@ export async function updateProfile(
       return {
         success: false,
         message: "Bio cannot exceed 160 characters",
-        status: 400,
       };
     }
 
@@ -55,7 +53,6 @@ export async function updateProfile(
       return {
         success: false,
         message: "User not found",
-        status: 404,
       };
     }
 
@@ -63,15 +60,44 @@ export async function updateProfile(
     user.bio = bio?.trim() || "";
     user.location = location?.trim() || "";
     user.website = website?.trim() || "";
-    user.profilePic = profilePic?.trim() || "";
-    user.coverImage = coverImage?.trim() || "";
+
+    if (profilePic) {
+      const oldProfilePicPublicId = user.profilePicPublicId;
+
+      const uploadResult = await cloudinary.uploader.upload(profilePic, {
+        folder: "x-clone/profile-pictures",
+      });
+
+      user.profilePic = uploadResult.secure_url;
+
+      user.profilePicPublicId = uploadResult.public_id;
+
+      if (oldProfilePicPublicId) {
+        await cloudinary.uploader.destroy(oldProfilePicPublicId);
+      }
+    }
+
+    if (coverImage) {
+      const oldCoverImagePublicId = user.coverImagePublicId;
+
+      const uploadResult = await cloudinary.uploader.upload(coverImage, {
+        folder: "x-clone/cover-images",
+      });
+
+      user.coverImage = uploadResult.secure_url;
+
+      user.coverImagePublicId = uploadResult.public_id;
+
+      if (oldCoverImagePublicId) {
+        await cloudinary.uploader.destroy(oldCoverImagePublicId);
+      }
+    }
 
     await user.save();
 
     return {
       success: true,
       message: "Profile updated successfully",
-      status: 200,
     };
   } catch (error) {
     console.error("Update profile error:", error);
@@ -79,7 +105,6 @@ export async function updateProfile(
     return {
       success: false,
       message: "Failed to update profile",
-      status: 500,
     };
   }
 }

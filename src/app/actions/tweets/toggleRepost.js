@@ -3,6 +3,7 @@
 import { connectDB } from "@/lib/database/db";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import Tweet from "@/models/Tweet";
+import Notification from "@/models/Notification";
 
 export async function toggleRepost(tweetId) {
   try {
@@ -12,7 +13,6 @@ export async function toggleRepost(tweetId) {
       return {
         success: false,
         message: "You must be logged in",
-        status: 401,
       };
     }
 
@@ -24,7 +24,6 @@ export async function toggleRepost(tweetId) {
       return {
         success: false,
         message: "Tweet not found",
-        status: 404,
       };
     }
 
@@ -42,6 +41,17 @@ export async function toggleRepost(tweetId) {
 
     await tweet.save();
 
+    if (!alreadyReposted) {
+      if (tweet.author.toString() !== user._id.toString()) {
+        await Notification.create({
+          recipient: tweet.author,
+          sender: user._id,
+          type: "repost",
+          tweet: tweet._id,
+        });
+      }
+    }
+
     return {
       success: true,
       reposted: !alreadyReposted,
@@ -53,7 +63,6 @@ export async function toggleRepost(tweetId) {
     return {
       success: false,
       message: "Failed to update repost",
-      status: 500,
     };
   }
 }

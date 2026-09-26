@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/database/db";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 import Comment from "@/models/Comment";
 import Tweet from "@/models/Tweet";
+import Notification from "@/models/Notification";
 
 export async function createComment(tweetId, text) {
   try {
@@ -13,7 +14,6 @@ export async function createComment(tweetId, text) {
       return {
         success: false,
         message: "You must be logged in",
-        status: 401,
       };
     }
 
@@ -21,7 +21,6 @@ export async function createComment(tweetId, text) {
       return {
         success: false,
         message: "Comment cannot be empty",
-        status: 400,
       };
     }
 
@@ -29,7 +28,6 @@ export async function createComment(tweetId, text) {
       return {
         success: false,
         message: "Comment cannot exceed 280 characters",
-        status: 400,
       };
     }
 
@@ -41,7 +39,6 @@ export async function createComment(tweetId, text) {
       return {
         success: false,
         message: "Tweet not found",
-        status: 404,
       };
     }
 
@@ -51,11 +48,20 @@ export async function createComment(tweetId, text) {
       text: text.trim(),
     });
 
+    if (tweet.author.toString() !== user._id.toString()) {
+      await Notification.create({
+        recipient: tweet.author,
+        sender: user._id,
+        type: "comment",
+        tweet: tweet._id,
+        comment: comment._id,
+      });
+    }
+
     return {
       success: true,
       message: "Comment added",
       comment: JSON.parse(JSON.stringify(comment)),
-      status: 201,
     };
   } catch (error) {
     console.error("Create comment error:", error);
@@ -63,7 +69,6 @@ export async function createComment(tweetId, text) {
     return {
       success: false,
       message: "Failed to create comment",
-      status: 500,
     };
   }
 }
