@@ -15,12 +15,19 @@ export const getCurrentUser = async () => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const user = await User.findById(decoded.userId.toString()).select(
-      "-password",
-    );
+    const user = await User.findById(decoded.userId.toString())
+      .select("-password")
+      .lean();
 
-    return user;
+    if (!user) {
+      return null;
+    }
+
+    return JSON.parse(JSON.stringify(user));
   } catch (error) {
+    if (error?.digest === "DYNAMIC_SERVER_USAGE") {
+      throw error;
+    }
     console.error("Get current user error:", error);
 
     return null;

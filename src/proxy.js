@@ -17,4 +17,11 @@ export function proxy(request) {
   return NextResponse.next();
 }
 
-export const config = { matcher: ["/home/:path*"] };
+export const config = {
+  matcher: [
+    "/home/:path*",
+    "/profile/:path*",
+    "/tweet/:path*",
+    "/notifications/:path*",
+  ],
+};
