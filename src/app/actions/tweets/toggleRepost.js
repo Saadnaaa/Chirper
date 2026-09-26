@@ -1,0 +1,59 @@
+"use server";
+
+import { connectDB } from "@/lib/database/db";
+import { getCurrentUser } from "@/lib/auth/getCurrentUser";
+import Tweet from "@/models/Tweet";
+
+export async function toggleRepost(tweetId) {
+  try {
+    const user = await getCurrentUser();
+
+    if (!user) {
+      return {
+        success: false,
+        message: "You must be logged in",
+        status: 401,
+      };
+    }
+
+    await connectDB();
+
+    const tweet = await Tweet.findById(tweetId);
+
+    if (!tweet) {
+      return {
+        success: false,
+        message: "Tweet not found",
+        status: 404,
+      };
+    }
+
+    const userId = user._id.toString();
+
+    const alreadyReposted = tweet.reposts.some(
+      (id) => id.toString() === userId,
+    );
+
+    if (alreadyReposted) {
+      tweet.reposts = tweet.reposts.filter((id) => id.toString() !== userId);
+    } else {
+      tweet.reposts.push(user._id);
+    }
+
+    await tweet.save();
+
+    return {
+      success: true,
+      reposted: !alreadyReposted,
+      repostsCount: tweet.reposts.length,
+    };
+  } catch (error) {
+    console.error("Toggle repost error:", error);
+
+    return {
+      success: false,
+      message: "Failed to update repost",
+      status: 500,
+    };
+  }
+}

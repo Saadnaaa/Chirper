@@ -1,23 +1,30 @@
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
-import LogoutButton from "../components/auth/LogoutButton";
+import TweetComposer from "../components/tweets/TweetComposer";
+import { getTweets } from "../actions/tweets/getTweets";
+import TweetCard from "../components/tweets/TweetCard";
 
 export default async function HomePage() {
   const user = await getCurrentUser();
+  const tweets = await getTweets();
+
   return (
     <main>
       <h1>Welcome to X Clone</h1>
 
-      {user ? (
-        <div>
-          <p>You are logged in</p>
-          <p>Name: {user.name}</p>
-          <p>Username: {user.username}</p>
-          <p>Email: {user.email}</p>
+      {user && (
+        <>
+          <p>{user.username}</p>
 
-          <LogoutButton />
-        </div>
-      ) : (
-        <p>You are not logged in.</p>
+          <section>
+            {tweets.length === 0 ? (
+              <p>No tweets yet.</p>
+            ) : (
+              tweets.map((tweet) => <TweetCard key={tweet._id} tweet={tweet} />)
+            )}
+          </section>
+
+          <TweetComposer />
+        </>
       )}
     </main>
   );
