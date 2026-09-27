@@ -7,16 +7,16 @@ import Notification from "@/models/Notification";
 
 export async function toggleFollow(userId) {
   try {
-    const currentUser = await getCurrentUser();
+    const authenticatedUser = await getCurrentUser();
 
-    if (!currentUser) {
+    if (!authenticatedUser) {
       return {
         success: false,
         message: "You must be logged in",
       };
     }
 
-    if (currentUser._id.toString() === userId) {
+    if (authenticatedUser._id.toString() === userId) {
       return {
         success: false,
         message: "You cannot follow yourself",
@@ -25,7 +25,15 @@ export async function toggleFollow(userId) {
 
     await connectDB();
 
+    const currentUser = await User.findById(authenticatedUser._id);
     const targetUser = await User.findById(userId);
+
+    if (!currentUser) {
+      return {
+        success: false,
+        message: "User not found",
+      };
+    }
 
     if (!targetUser) {
       return {
@@ -35,14 +43,15 @@ export async function toggleFollow(userId) {
     }
 
     const currentUserId = currentUser._id.toString();
+    const targetUserId = targetUser._id.toString();
 
     const alreadyFollowing = currentUser.following.some(
-      (id) => id.toString() === userId,
+      (id) => id.toString() === targetUserId,
     );
 
     if (alreadyFollowing) {
       currentUser.following = currentUser.following.filter(
-        (id) => id.toString() !== userId,
+        (id) => id.toString() !== targetUserId,
       );
 
       targetUser.followers = targetUser.followers.filter(
