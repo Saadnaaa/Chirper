@@ -6,6 +6,7 @@ import { getUserProfile } from "@/actions/users/getUserProfile";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
 
 import FollowButton from "@/components/profile/FollowButton";
+import FollowersFollowing from "@/components/profile/FollowersFollowing";
 import ProfileAvatar from "@/components/profile/ProfileAvatar";
 import TweetCard from "@/components/tweets/TweetCard";
 
@@ -136,43 +137,10 @@ export default async function ProfilePage({ params }) {
           )}
         </div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          {[
-            { label: "Following", people: profile.user.following || [] },
-            { label: "Followers", people: profile.user.followers || [] },
-          ].map(({ label, people }) => (
-            <section key={label} aria-label={label} className="min-w-0">
-              <h3 className="mb-3 flex items-baseline gap-2 px-2 py-1 text-sm font-bold text-neutral-100">
-                {label}
-                <span className="font-extrabold text-neutral-100">
-                  {people.length}
-                </span>
-              </h3>
-              {people.length > 0 && (
-                <ul className="max-h-48 space-y-1 overflow-y-auto px-1">
-                  {people.map((person) => (
-                    <li key={person._id}>
-                      <Link
-                        href={`/profile/${encodeURIComponent(person.username)}`}
-                        className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-neutral-900"
-                      >
-                        <ProfileAvatar user={person} size={32} />
-                        <span className="flex min-w-0 flex-col">
-                          <span className="truncate text-sm font-medium text-neutral-100">
-                            {person.name}
-                          </span>
-                          <span className="truncate text-xs text-neutral-500">
-                            @{person.username}
-                          </span>
-                        </span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </section>
-          ))}
-        </div>
+        <FollowersFollowing
+          following={profile.user.following || []}
+          followers={profile.user.followers || []}
+        />
       </section>
 
       {/* Posts Section */}
