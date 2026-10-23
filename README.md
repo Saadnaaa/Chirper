@@ -1,32 +1,78 @@
-# Chirper
+# 🐦 Chirper
 
-Chirper is a microblogging app built with Next.js. Users can post, follow accounts, browse Following and For You feeds, and interact through likes, reposts, comments, and notifications. Profiles support editable details and images. The interface includes Dark, Light, Valentine, Dim, Cupcake, and Dracula themes.
+A responsive microblogging app built with Next.js, React, MongoDB and Cloudinary. Share posts and images, follow people, and interact through likes, reposts and comments.
 
-## Setup
+<p>
+  <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" />
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
+  <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" />
+  <img src="https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white" />
+</p>
 
-Requirements: Node.js, npm, and a MongoDB database. Cloudinary credentials are needed for profile and post image uploads.
+### 🔗 [Live Demo → chirper-xi-peach.vercel.app](https://chirper-xi-peach.vercel.app)
 
-1. Install dependencies: `npm install`
-2. Create `.env.local` in the project root:
+## 📸 Screenshots
 
-```env
-MONGO_URI=your-mongodb-connection-string
-JWT_SECRET=your-jwt-secret
-CLOUDINARY_CLOUD_NAME=your-cloud-name
-CLOUDINARY_API_KEY=your-cloudinary-api-key
-CLOUDINARY_API_SECRET=your-cloudinary-api-secret
-```
+| Feed | Profile | Themes |
+|---|---|---|
+| ![Feed](feed.png) | ![Profile](profile.png) | ![Themes](themes.png) |
 
-3. Start the development server: `npm run dev`
-4. Open [http://localhost:3000](http://localhost:3000) and register an account.
+## ✨ Features
 
-## Scripts
+- 🔐 User registration and login
+- 📝 Create posts with text and images
+- 👥 Follow other users
+- 📰 **Following** and **For You** feeds
+- ❤️ Like, 🔁 repost and 💬 comment on posts
+- 🔔 Notifications for interactions
+- 🖼️ Editable profile details and images
+- 🎨 Persistent themes: Dark, Light, Valentine, Dim, Cupcake and Dracula
+- 📱 Fully responsive design
 
-- `npm run dev` starts the development server.
-- `npm run lint` runs ESLint.
-- `npm run build` creates a production build.
-- `npm start` serves the production build.
+## 🧰 Tech Stack
 
-## Stack
+- **Framework:** Next.js (App Router), React
+- **Database:** MongoDB with Mongoose
+- **Styling:** Tailwind CSS, DaisyUI
+- **Image uploads:** Cloudinary
 
-Next.js App Router, React, MongoDB with Mongoose, Tailwind CSS, DaisyUI, and Cloudinary.
+## ⚙️ Getting Started
+
+**Requirements:** Node.js, npm, a MongoDB database, and a Cloudinary account.
+
+1. Clone the repo
+   ```bash
+   git clone https://github.com/Saadnaaa/Chirper.git
+   cd Chirper
+   ```
+2. Install dependencies
+   ```bash
+   npm install
+   ```
+3. Create a `.env.local` file in the project root:
+   ```env
+   MONGO_URI=your-mongodb-connection-string
+   JWT_SECRET=your-jwt-secret
+   CLOUDINARY_CLOUD_NAME=your-cloud-name
+   CLOUDINARY_API_KEY=your-cloudinary-api-key
+   CLOUDINARY_API_SECRET=your-cloudinary-api-secret
+   ```
+4. Start the dev server
+   ```bash
+   npm run dev
+   ```
+5. Open [http://localhost:3000](http://localhost:3000) and register an account.
+
+## 📜 Scripts
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Start the development server |
+| `npm run build` | Create a production build |
+| `npm start` | Serve the production build |
+| `npm run lint` | Run ESLint |
+
+## 👤 Author
+
+**Saad ur Rehman** · [GitHub](https://github.com/Saadnaaa) · [LinkedIn](https://www.linkedin.com/in/saadnaaa/)
